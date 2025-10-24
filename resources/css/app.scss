@@ -1,0 +1,52 @@
+@import "tom-select/dist/css/tom-select.min.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .btn {
+        @apply inline-flex items-center gap-1.5 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 outline-none focus-visible:border-gray-500 focus-visible:ring-gray-500/50 focus-visible:ring-[3px] px-4 py-2 h-11 rounded-xl shadow-lg;
+        &.btn-std {
+            @apply border border-slate-200 bg-white shadow-gray-200/50;
+        }
+        &.btn-primary {
+            @apply text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-purple-200/50;
+        }
+        &.btn-secondary {
+            @apply text-white bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 shadow-teal-200/50;
+        }
+    }
+}
+
+[x-cloak] { display: none!important;}
+.ts-wrapper {
+    .ts-control {
+        background: transparent!important;
+        border: 0;
+        padding: 0;
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
+    .ts-control, .ts-control input, .ts-dropdown {
+        font-size: inherit;
+        line-height: inherit;
+        color: inherit;
+    }
+    .ts-dropdown, .ts-dropdown-content {
+        border-radius: 0 0 0.75rem 0.75rem;
+    }
+
+    .ts-opt-desc {
+        color: #64748b;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+    }
+}
+gmp-place-autocomplete {
+    background: none;
+    height: 100%;
+}
+.focus-ring {
+    display: none!important;
+}
