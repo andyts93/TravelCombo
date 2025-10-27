@@ -30,6 +30,11 @@ class FlightRequest extends FormRequest
             'price' => ['required', 'numeric'],
             'people' => ['required', 'numeric', 'gt:0'],
             'url' => ['nullable', 'string'],
+            'trip_type' => ['required', 'string', 'in:round-trip,one-way'],
+            'airport_from_id_return' => ['nullable', 'exists:airports,id'],
+            'airport_to_id_return' => ['nullable', 'exists:airports,id'],
+            'date_from_return' => ['nullable', 'date'],
+            'date_to_return' => ['nullable', 'date', 'after:date_from'],
         ];
     }
 }

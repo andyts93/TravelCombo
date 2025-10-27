@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Flight extends Model
 {
@@ -17,6 +18,8 @@ class Flight extends Model
         'date_to',
         'price',
         'people',
+        'linked_flight_id',
+        'trip_type',
     ];
 
     protected $casts = [
@@ -47,5 +50,10 @@ class Flight extends Model
     public function airportTo(): BelongsTo
     {
         return $this->belongsTo(Airport::class, 'airport_to_id', 'id');
+    }
+
+    public function linkedFlight(): BelongsTo
+    {
+        return $this->belongsTo(Flight::class, 'linked_flight_id', 'id');
     }
 }

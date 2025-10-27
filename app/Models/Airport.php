@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 class Airport extends Model
@@ -18,4 +19,9 @@ class Airport extends Model
         'longitude',
         'timezone',
     ];
+
+    protected function shortName(): Attribute
+    {
+        return Attribute::get(fn() => "$this->iata_code - $this->municipality");
+    }
 }

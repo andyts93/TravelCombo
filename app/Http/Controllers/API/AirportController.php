@@ -14,7 +14,8 @@ class AirportController extends Controller
             ->when($request->input('q'), function ($qb) use ($request) {
                 $qb->where('name', 'like', '%' . $request->input('q') . '%')
                     ->orWhere('iata_code', 'like', '%' . $request->input('q') . '%')
-                    ->orWhere('municipality', 'like', '%' . $request->input('q') . '%');
+                    ->orWhere('municipality', 'like', '%' . $request->input('q') . '%')
+                    ->orWhere('id', $request->input('q'));
             })
             ->limit(25)
             ->get();

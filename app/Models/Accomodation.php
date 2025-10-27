@@ -22,4 +22,9 @@ class Accomodation extends Model
         'people',
         'url',
     ];
+
+    protected $casts = [
+        'date_from' => 'date',
+        'date_to' => 'date',
+    ];
 }

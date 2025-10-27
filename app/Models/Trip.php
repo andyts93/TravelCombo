@@ -17,4 +17,14 @@ class Trip extends Model
     {
         return $this->hasMany(Flight::class);
     }
+
+    public function outboundFlights(): HasMany
+    {
+        return $this->hasMany(Flight::class)->where('trip_type', 'outbound');
+    }
+
+    public function accomodations(): HasMany
+    {
+        return $this->hasMany(Accomodation::class);
+    }
 }

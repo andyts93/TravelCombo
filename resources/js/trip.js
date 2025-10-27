@@ -19,5 +19,25 @@ const airportOptions = {
     }
 }
 
-new TomSelect("#airport_from_id", airportOptions);
-new TomSelect("#airport_to_id", airportOptions);
+new TomSelect("#airport_from_id", {
+    ...airportOptions,
+    onChange(value) {
+        returnTo.on('load', function () {
+            returnTo.setValue(value);
+            returnTo.on('load', () => {});
+        });
+        returnTo.load(value);
+    }
+});
+new TomSelect("#airport_to_id", {
+    ...airportOptions,
+    onChange(value) {
+        returnFrom.on('load', function () {
+            returnFrom.setValue(value);
+            returnFrom.on('load', () => {});
+        });
+        returnFrom.load(value);
+    }
+});
+const returnFrom = new TomSelect("#airport_from_id_return", airportOptions);
+const returnTo = new TomSelect("#airport_to_id_return", airportOptions);

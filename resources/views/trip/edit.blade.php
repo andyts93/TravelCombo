@@ -18,44 +18,89 @@
         <x-forms.trip-form :trip="$trip"></x-forms.trip-form>
     </x-card>
 
-{{--    <div class="grid grid-cols-2 gap-6">--}}
-        <x-card>
-            <x-slot:header>
-                <div class="p-2 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white w-6 h-6"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14.5 6.5l3 -2.9a2.05 2.05 0 0 1 2.9 2.9l-2.9 3l2.5 7.5l-2.5 2.55l-3.5 -6.55l-3 3v3l-2 2l-1.5 -4.5l-4.5 -1.5l2 -2h3l3 -3l-6.5 -3.5l2.5 -2.5l7.5 2.5z" /></svg>
-                </div>
-                <div>
-                    <h4 class="leading-none">Flight</h4>
-                    <p class="text-slate-500 text-sm mt-0.5">Configure your flight parameters</p>
-                </div>
-            </x-slot:header>
+    <x-card class="mb-6">
+        <x-slot:header>
+            <div class="p-2 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white w-6 h-6"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14.5 6.5l3 -2.9a2.05 2.05 0 0 1 2.9 2.9l-2.9 3l2.5 7.5l-2.5 2.55l-3.5 -6.55l-3 3v3l-2 2l-1.5 -4.5l-4.5 -1.5l2 -2h3l3 -3l-6.5 -3.5l2.5 -2.5l7.5 2.5z" /></svg>
+            </div>
+            <div>
+                <h4 class="leading-none">Flights</h4>
+                <p class="text-slate-500 text-sm mt-0.5">Compare your flights</p>
+            </div>
+        </x-slot:header>
 
-            <table class="w-full text-sm">
-                <thead>
-                    <x-table.tr-head>
-                        <x-table.th-head>From</x-table.th-head>
-                        <x-table.th-head>To</x-table.th-head>
-                        <x-table.th-head>Departure</x-table.th-head>
-                        <x-table.th-head>Arrival</x-table.th-head>
-                        <x-table.th-head>Duration</x-table.th-head>
-                        <x-table.th-head>Price</x-table.th-head>
-                    </x-table.tr-head>
-                </thead>
-                <tbody>
-                    @foreach($trip->flights as $flight)
+        <table class="w-full text-sm">
+            <thead>
+                <x-table.tr-head>
+                    <x-table.th-head>From</x-table.th-head>
+                    <x-table.th-head>To</x-table.th-head>
+                    <x-table.th-head>Departure</x-table.th-head>
+                    <x-table.th-head>Arrival</x-table.th-head>
+                    <x-table.th-head>Duration</x-table.th-head>
+                    <x-table.th-head>Price</x-table.th-head>
+                </x-table.tr-head>
+            </thead>
+            <tbody>
+                @foreach($trip->outboundFlights as $flight)
+                    <x-table.tr-body>
+                        <x-table.td-body>{{ $flight->airportFrom->iata_code }} - {{ $flight->airportFrom->municipality }}</x-table.td-body>
+                        <x-table.td-body>{{ $flight->airportTo->iata_code }} - {{ $flight->airportTo->municipality }}</x-table.td-body>
+                        <x-table.td-body>{{ $flight->date_from->format('d/m/y H:i') }}</x-table.td-body>
+                        <x-table.td-body>{{ $flight->date_to->format('d/m/y H:i') }}</x-table.td-body>
+                        <x-table.td-body>{{ $flight->duration }}h</x-table.td-body>
+                        <x-table.td-body>@money($flight->price)</x-table.td-body>
+                    </x-table.tr-body>
+                    @if($flight->linkedFlight)
                         <x-table.tr-body>
-                            <x-table.td-body>{{ $flight->airportFrom->iata_code }} - {{ $flight->airportFrom->municipality }}</x-table.td-body>
-                            <x-table.td-body>{{ $flight->airportTo->iata_code }} - {{ $flight->airportTo->municipality }}</x-table.td-body>
-                            <x-table.td-body>{{ $flight->date_from->format('d/m/y H:i') }}</x-table.td-body>
-                            <x-table.td-body>{{ $flight->date_to->format('d/m/y H:i') }}</x-table.td-body>
-                            <x-table.td-body>{{ $flight->duration }}h</x-table.td-body>
+                            <x-table.td-body>{{ $flight->linkedFlight->airportFrom->iata_code }} - {{ $flight->linkedFlight->airportFrom->municipality }}</x-table.td-body>
+                            <x-table.td-body>{{ $flight->linkedFlight->airportTo->iata_code }} - {{ $flight->linkedFlight->airportTo->municipality }}</x-table.td-body>
+                            <x-table.td-body>{{ $flight->linkedFlight->date_from->format('d/m/y H:i') }}</x-table.td-body>
+                            <x-table.td-body>{{ $flight->linkedFlight->date_to->format('d/m/y H:i') }}</x-table.td-body>
+                            <x-table.td-body>{{ $flight->linkedFlight->duration }}h</x-table.td-body>
                             <x-table.td-body>@money($flight->price)</x-table.td-body>
                         </x-table.tr-body>
-                    @endforeach
-                </tbody>
-            </table>
-        </x-card>
-{{--    </div>--}}
+                    @endif
+                @endforeach
+            </tbody>
+        </table>
+    </x-card>
+
+    <x-card class="mb-6">
+        <x-slot:header>
+            <div class="p-2 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-xl">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white size-6"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M22 17v-3h-20" /><path d="M2 8v9" /><path d="M12 14h10v-2a3 3 0 0 0 -3 -3h-7v5z" /></svg>
+            </div>
+            <div>
+                <h4 class="leading-none">Accomodation</h4>
+                <p class="text-slate-500 text-sm mt-0.5">Compare your accomodations</p>
+            </div>
+        </x-slot:header>
+
+        <table class="w-full text-sm">
+            <thead>
+            <x-table.tr-head>
+                <x-table.th-head>Name</x-table.th-head>
+{{--                <x-table.th-head>Address</x-table.th-head>--}}
+                <x-table.th-head>Check-in</x-table.th-head>
+                <x-table.th-head>Check-out</x-table.th-head>
+                <x-table.th-head>People</x-table.th-head>
+                <x-table.th-head>Price</x-table.th-head>
+            </x-table.tr-head>
+            </thead>
+            <tbody>
+            @foreach($trip->accomodations as $accomodation)
+                <x-table.tr-body>
+                    <x-table.td-body>{{ $accomodation->name }}</x-table.td-body>
+{{--                    <x-table.td-body>{{ $accomodation->addressLine }}</x-table.td-body>--}}
+                    <x-table.td-body>{{ $accomodation->date_from->format('d/m/y') }}</x-table.td-body>
+                    <x-table.td-body>{{ $accomodation->date_to->format('d/m/y') }}</x-table.td-body>
+                    <x-table.td-body>{{ $accomodation->people }}</x-table.td-body>
+                    <x-table.td-body>@money($accomodation->price)</x-table.td-body>
+                </x-table.tr-body>
+            @endforeach
+            </tbody>
+        </table>
+    </x-card>
 
     <div class="grid grid-cols-2 gap-6">
         <x-card class="shadow-purple-100/50">
