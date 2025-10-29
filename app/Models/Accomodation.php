@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 class Accomodation extends Model
@@ -21,10 +23,21 @@ class Accomodation extends Model
         'price',
         'people',
         'url',
+        'timezone'
     ];
 
     protected $casts = [
-        'date_from' => 'date',
-        'date_to' => 'date',
+        'date_from' => 'datetime',
+        'date_to' => 'datetime',
     ];
+
+    protected function dateFrom(): Attribute
+    {
+        return Attribute::get(fn($value) => Carbon::parse($value)->timezone($this->timezone ?? 'UTC'));
+    }
+
+    protected function dateTo(): Attribute
+    {
+        return Attribute::get(fn($value) => Carbon::parse($value)->timezone($this->timezone ?? 'UTC'));
+    }
 }

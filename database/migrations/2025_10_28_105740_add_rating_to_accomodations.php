@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('accomodations', function (Blueprint $table) {
-            $table->timestamp('date_from')->change();
-            $table->timestamp('date_to')->change();
+            $table->decimal('rating', 3, 1)->nullable();
         });
     }
 
@@ -23,8 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('accomodations', function (Blueprint $table) {
-            $table->date('date_from')->change();
-            $table->date('date_to')->change();
+            $table->dropColumn('rating');
         });
     }
 };

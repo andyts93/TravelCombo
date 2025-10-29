@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Airport;
+use App\Services\TimeZoneService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 
@@ -32,15 +33,7 @@ class ImportTimezones extends Command
             ->whereNull('timezone')
             ->chunkById(50, function ($airports) {
                 foreach ($airports as $airport) {
-                    $response = Http::get('https://api.timezonedb.com/v2.1/get-time-zone', [
-                        'key' => env('TIMEZONEDB_API_KEY'),
-                        'format' => 'json',
-                        'by' => 'position',
-                        'lat' => $airport->latitude,
-                        'lng' => $airport->longitude,
-
-                    ]);
-                    $json = json_decode($response->body());
+                    $json = TimeZoneService::getTimezone($airport->latitude, $airport->longitude);
                     if ($json) {
                         $airport->update(['timezone' => $json->zoneName]);
                     }

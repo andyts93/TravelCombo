@@ -5,10 +5,18 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TripRequest;
 use App\Models\Airport;
 use App\Models\Trip;
+use App\Services\NagerDateService;
+use App\Services\NominatimService;
+use App\Services\OpenAqService;
+use App\Services\OpenMeteoService;
+use App\Services\OverpassService;
+use App\Services\ProjectOsrmService;
+use App\Services\UnsplashService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Ramsey\Collection\Collection;
 
 class TripController extends Controller
@@ -48,7 +56,15 @@ class TripController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Trip $trip)
+    public function show(
+        Trip $trip,
+        ProjectOsrmService $osrmService,
+        NominatimService $nominatimService,
+        OverpassService $overpassService,
+        OpenMeteoService $meteoService,
+        UnsplashService $unsplashService,
+        NagerDateService $nagerDateService
+    )
     {
         $matrix = new \Illuminate\Support\Collection();
 
@@ -60,6 +76,12 @@ class TripController extends Controller
                     $response = Http::get('https://router.project-osrm.org/route/v1/car/' . $flight->airportTo->longitude . ',' . $flight->airportTo->latitude . ';' . $accomodation->longitude . ',' . $accomodation->latitude);
                     return json_decode($response->body());
                 });
+
+//                Cache::forget('attractions_' . $accomodation->id);
+                $attractions = Cache::rememberForever('attractions_' . $accomodation->id, function() use ($accomodation, $overpassService) {
+                   return $overpassService->searchNearbyPOIs($accomodation->latitude, $accomodation->longitude, 500);
+                });
+
                 $price = $flight->price + $accomodation->price;
 
                 if (!isset($min['duration'])) $min['duration'] = $response->routes[0]->duration;
@@ -71,28 +93,88 @@ class TripController extends Controller
                 if ($price < $min['price']) {
                     $min['price'] = $price;
                 }
+
+                $checkInGap = max(0, $flight->date_to->clone()->addSeconds($response->routes[0]->duration)->diffInMinutes(
+                    $accomodation->date_from
+                ));
+                $checkOutGap = max(0, $accomodation->date_to->diffInMinutes(
+                    $flight->linkedFlight->date_from
+                ));
                 $matrix->push((object)[
+                    'id' => Str::uuid(),
                     'flight' => $flight,
                     'accomodation' => $accomodation,
                     'distance' => $response->routes[0]->distance,
                     'duration' => $response->routes[0]->duration,
                     'price' => $flight->price + $accomodation->price,
-                    'check_in_gap' => $flight->date_to->clone()->utc()->longRelativeDiffForHumans(
-                        Carbon::parse($accomodation->date_from->setTimeFromTimeString($accomodation->check_in ?? '12:00:00'))
-                    ),
-                    'check_out_gap' => $flight->linkedFlight->date_from->clone()->utc()->longRelativeDiffForHumans(
-                        Carbon::parse($accomodation->date_to->setTimeFromTimeString($accomodation->check_out ?? '09:00:00'))
-                    )
+                    'check_in_gap' => $checkInGap,
+                    'check_out_gap' => $checkOutGap,
+                    'homelessness' => $checkInGap + $checkOutGap,
+                    'nearby' => collect($attractions)->groupBy(fn($el) => $el['tags']['tourism'] ?? $el['tags']['shop'] ?? $el['tags']['public_transport']),
                 ]);
             }
         }
-        // dd($matrix->toArray());
 
-        $matrix = $matrix->map(function($el) use ($min) {
-            $el->best_distance = $el->duration === $min['duration'];
-            $el->best_price = $el->price === $min['price'];
-            return $el;
-        });
+        $matrix = $matrix->groupBy('accomodation.city')->map(function ($combinations) use ($meteoService, $nominatimService, $unsplashService, $osrmService, $min, $nagerDateService) {
+            $city = $combinations->first()->accomodation->city;
+            $country = $combinations->first()->accomodation->region_code;
+
+            if ($city) {
+                $minDate = $combinations->pluck('accomodation')->min('date_from');
+                $maxDate = $combinations->pluck('accomodation')->min('date_to');
+
+                $cityCenter = Cache::rememberForever('center-' . $city, function () use ($city, $nominatimService) {
+                    return $nominatimService->search($city);
+                });
+
+                $combinations = $combinations->map(function ($combination) use ($cityCenter, $osrmService, $min) {
+                    $distance = Cache::rememberForever('distance_' . $combination->accomodation->id . '_' . $cityCenter['lat'] . $cityCenter['lon'], function () use ($combination, $cityCenter, $osrmService) {
+                        return $osrmService->route('foot', [[$combination->accomodation->longitude, $combination->accomodation->latitude], [$cityCenter['lon'], $cityCenter['lat']]]);
+                    });
+                    $combination->center_distance = isset($distance) ? $distance['routes'][0]['distance'] : null;
+                    $combination->center_duration = isset($distance) ? $distance['routes'][0]['duration'] : null;
+
+                    $combination->best_distance = $combination->duration === $min['duration'];
+                    $combination->best_price = $combination->price === $min['price'];
+
+                    return $combination;
+                });
+
+                $weather = Cache::rememberForever('weather_' . $city, function () use ($minDate, $maxDate, $cityCenter, $meteoService) {
+                    return $meteoService->getHistoricalWeather(
+                        $cityCenter['lat'],
+                        $cityCenter['lon'],
+                        $minDate->clone()->subYear(),
+                        $maxDate->clone()->subYear());
+                });
+//
+                $image = Cache::rememberForever('unsplash_' . $city, function () use ($unsplashService, $city) {
+                    $photos = $unsplashService->search($city);
+                    return collect($photos['results'])->get(rand(0, count($photos['results']) - 1));
+                });
+
+                $years = collect([$minDate->year, $maxDate->year])->unique()->values();
+                $holidays = Cache::rememberForever('holidays_' . $country . $years->implode('_'), function() use ($nagerDateService, $country, $years) {
+                    $result = collect([]);
+                    foreach ($years as $year) {
+                        $result = $result->merge($nagerDateService->getHolidays($year, $country));
+                    }
+                    return $result;
+                });
+                $holidays = $holidays->filter(function($holiday) use ($minDate, $maxDate) {
+                    return Carbon::parse($holiday['date'])->between($minDate, $maxDate);
+                });
+            }
+
+            return (object) [
+                'city' => $city,
+                'image' => $image ?? null,
+                'combinations' => $combinations,
+                'weather' => $weather ?? null,
+                'holidays' => $holidays ?? [],
+            ];
+
+        })->values();
 
         return view('trip.show', compact('trip', 'matrix'));
     }
