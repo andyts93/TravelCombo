@@ -1,4 +1,4 @@
-@props(['accomodation' => null, 'tripId'])
+@props(['accomodation' => null, 'tripId', 'minDate', 'maxDate'])
 
 <form action="{{ $accomodation ? route('accomodation.update', $accomodation) : route('accomodation.store') }}" method="POST">
     @csrf
@@ -37,7 +37,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-teal-500"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" /><path d="M16 3v4" /><path d="M21.121 20.121a3 3 0 1 0 -4.242 0c.418 .419 1.125 1.045 2.121 1.879c1.051 -.89 1.759 -1.516 2.121 -1.879z" /><path d="M19 18v.01" /><path d="M8 3v4" /><path d="M4 11h16" /></svg>
                 Check-in
             </x-input-label>
-            <x-text-input name="date_from" id="date_from" type="datetime-local" required value="{{ old('date_from', $accomodation?->date_from) }}"></x-text-input>
+            <x-text-input name="date_from" id="date_from" type="datetime-local" min="{{ $minDate }}" max="{{ $maxDate }}" required value="{{ old('date_from', $accomodation?->date_from) }}"></x-text-input>
             <x-input-error :messages="$errors->get('date_from')" />
         </div>
         <div class="space-y-3">
@@ -45,7 +45,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-cyan-500"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" /><path d="M16 3v4" /><path d="M21.121 20.121a3 3 0 1 0 -4.242 0c.418 .419 1.125 1.045 2.121 1.879c1.051 -.89 1.759 -1.516 2.121 -1.879z" /><path d="M19 18v.01" /><path d="M8 3v4" /><path d="M4 11h16" /></svg>
                 Check-out
             </x-input-label>
-            <x-text-input name="date_to" id="date_to" type="datetime-local" required value="{{ old('date_to', $accomodation?->date_to) }}"></x-text-input>
+            <x-text-input name="date_to" id="date_to" type="datetime-local" required min="{{ $minDate }}" max="{{ $maxDate }}" value="{{ old('date_to', $accomodation?->date_to) }}"></x-text-input>
             <x-input-error :messages="$errors->get('date_to')" />
         </div>
         <div class="space-y-3">

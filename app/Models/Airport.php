@@ -20,6 +20,8 @@ class Airport extends Model
         'timezone',
     ];
 
+    protected $appends = ['short_name'];
+
     protected function shortName(): Attribute
     {
         return Attribute::get(fn() => "$this->iata_code - $this->municipality");

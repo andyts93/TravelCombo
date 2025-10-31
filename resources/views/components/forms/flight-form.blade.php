@@ -1,6 +1,6 @@
-@props(['flight' => null, 'tripId'])
+@props(['flight' => null, 'tripId', 'minDate', 'maxDate'])
 
-<form action="{{ $flight ? route('flight.update', $flight) : route('flight.store') }}" method="POST" x-data="{ type: 'round-trip' }">
+<form action="{{ $flight ? route('flight.update', $flight) : route('flight.store') }}" method="POST" x-data="flightForm()" id="flight-form">
     @csrf
     @if($flight)
         @method('PUT')
@@ -12,12 +12,13 @@
 
     <input type="hidden" name="trip_id" value="{{ $tripId }}" />
     <input type="hidden" name="trip_type" x-model="type" />
-    {{ $errors }}
 
     <div role="tablist" class="h-9 w-fit items-center justify-center rounded-xl flex bg-white/80 backdrop-blur-sm p-1.5 shadow-sm border-0 mb-4">
         <button type="button" class="inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center rounded-xl border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap" @click="type = 'round-trip'" :class="type === 'round-trip' ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' : ''">Round-trip</button>
         <button type="button" class="inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center rounded-xl border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap" @click="type = 'one-way'" :class="type === 'one-way' ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' : ''">One way</button>
     </div>
+
+    <button type="button" @click="extract">Paste from extractor</button>
 
     <div class="grid md:grid-cols-2 gap-6">
         <fieldset class="col-span-2 grid md:grid-cols-2 gap-6 border px-2 pt-2 pb-4 rounded-lg">
@@ -28,9 +29,11 @@
                     Origin
                 </x-input-label>
                 <x-select-input name="airport_from_id" id="airport_from_id" required>
-                    @if(old('airport_from_id', $flight?->airport_from_id))
-                        <option value="{{ old('airport_from_id', $flight?->airport_from_id) }}">Selected</option>
-                    @endif
+{{--                    @if(old('airport_from_id', $flight?->airport_from_id))--}}
+{{--                        <option value="{{ old('airport_from_id', $flight?->airport_from_id) }}">--}}
+{{--                            {{ $flight?->airportFrom?->short_name ?? 'Selected' }}--}}
+{{--                        </option>--}}
+{{--                    @endif--}}
                 </x-select-input>
                 <x-input-error :messages="$errors->get('airport_from_id')" />
             </div>
@@ -51,7 +54,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-teal-500"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" /><path d="M16 3v4" /><path d="M21.121 20.121a3 3 0 1 0 -4.242 0c.418 .419 1.125 1.045 2.121 1.879c1.051 -.89 1.759 -1.516 2.121 -1.879z" /><path d="M19 18v.01" /><path d="M8 3v4" /><path d="M4 11h16" /></svg>
                     Departure
                 </x-input-label>
-                <x-text-input name="date_from" id="date_from" type="datetime-local" value="{{ old('date_from', $flight?->date_from) }}"></x-text-input>
+                <x-text-input name="date_from" id="date_from" type="datetime-local" min="{{ $minDate }}" max="{{ $maxDate }}" value="{{ old('date_from', $flight?->date_from) }}"></x-text-input>
                 <x-input-error :messages="$errors->get('date_from')" />
             </div>
             <div class="space-y-3">
@@ -59,7 +62,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-cyan-500"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" /><path d="M16 3v4" /><path d="M21.121 20.121a3 3 0 1 0 -4.242 0c.418 .419 1.125 1.045 2.121 1.879c1.051 -.89 1.759 -1.516 2.121 -1.879z" /><path d="M19 18v.01" /><path d="M8 3v4" /><path d="M4 11h16" /></svg>
                     Arrival
                 </x-input-label>
-                <x-text-input name="date_to" id="date_to" type="datetime-local" value="{{ old('date_to', $flight?->date_to) }}"></x-text-input>
+                <x-text-input name="date_to" id="date_to" type="datetime-local" min="{{ $minDate }}" max="{{ $maxDate }}" value="{{ old('date_to', $flight?->date_to) }}"></x-text-input>
                 <x-input-error :messages="$errors->get('date_to')" />
             </div>
         </fieldset>
@@ -94,7 +97,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-teal-500"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" /><path d="M16 3v4" /><path d="M21.121 20.121a3 3 0 1 0 -4.242 0c.418 .419 1.125 1.045 2.121 1.879c1.051 -.89 1.759 -1.516 2.121 -1.879z" /><path d="M19 18v.01" /><path d="M8 3v4" /><path d="M4 11h16" /></svg>
                     Departure
                 </x-input-label>
-                <x-text-input name="date_from_return" id="date_from_return" type="datetime-local" value="{{ old('date_from_return', $flight?->date_from) }}"></x-text-input>
+                <x-text-input name="date_from_return" id="date_from_return" min="{{ $minDate }}" max="{{ $maxDate }}" type="datetime-local" value="{{ old('date_from_return', $flight?->date_from) }}"></x-text-input>
                 <x-input-error :messages="$errors->get('date_from_return')" />
             </div>
             <div class="space-y-3">
@@ -102,7 +105,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-cyan-500"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" /><path d="M16 3v4" /><path d="M21.121 20.121a3 3 0 1 0 -4.242 0c.418 .419 1.125 1.045 2.121 1.879c1.051 -.89 1.759 -1.516 2.121 -1.879z" /><path d="M19 18v.01" /><path d="M8 3v4" /><path d="M4 11h16" /></svg>
                     Arrival
                 </x-input-label>
-                <x-text-input name="date_to_return" id="date_to_return" type="datetime-local" value="{{ old('date_to', $flight?->date_to) }}"></x-text-input>
+                <x-text-input name="date_to_return" id="date_to_return" min="{{ $minDate }}" max="{{ $maxDate }}" type="datetime-local" value="{{ old('date_to', $flight?->date_to) }}"></x-text-input>
                 <x-input-error :messages="$errors->get('date_to_return')" />
             </div>
         </fieldset>

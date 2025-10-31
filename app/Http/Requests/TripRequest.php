@@ -23,8 +23,10 @@ class TripRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string'],
+            'date_from' => ['required', 'date'],
+            'date_to' => ['required', 'date'],
+            'country_id' => ['required', 'exists:countries,id'],
             'description' => ['nullable', 'string'],
-            'user_timezone' => ['nullable', 'string'],
         ];
     }
 }

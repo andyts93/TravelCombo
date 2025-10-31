@@ -19,6 +19,6 @@
     @endif
 
     <x-card class="shadow-violet-100/50 mb-4">
-        <x-forms.trip-form></x-forms.trip-form>
+        <x-forms.trip-form :countries="$countries"></x-forms.trip-form>
     </x-card>
 </x-app-layout>

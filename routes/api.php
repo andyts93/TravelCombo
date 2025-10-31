@@ -8,3 +8,4 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('airports', [\App\Http\Controllers\API\AirportController::class, 'index']);
+Route::post('flight/import', [\App\Http\Controllers\API\FlightController::class, 'import']);

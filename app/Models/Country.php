@@ -11,4 +11,7 @@ class Country extends Model
         'name',
         'continent',
     ];
+
+    protected $keyType = 'string';
+    public $incrementing = false;
 }

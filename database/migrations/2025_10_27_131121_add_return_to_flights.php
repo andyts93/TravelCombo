@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('flights', function (Blueprint $table) {
             $table->enum('trip_type', ['outbound', 'inbound'])->default('outbound');
-            $table->foreignIdFor(\App\Models\Flight::class, 'linked_flight_id')->nullable()->constrained()->restrictOnDelete()->cascadeOnUpdate();
+            $table->foreignIdFor(\App\Models\Flight::class, 'linked_flight_id')->nullable()->constrained()->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 

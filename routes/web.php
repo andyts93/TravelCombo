@@ -19,6 +19,8 @@ Route::middleware('auth')->group(function () {
 
 Route::resource('trip', \App\Http\Controllers\TripController::class);
 Route::post('flight', [\App\Http\Controllers\FlightController::class, 'store'])->name('flight.store');
+Route::put('flight', [\App\Http\Controllers\FlightController::class, 'update'])->name('flight.update');
+
 Route::post('accomodation', [\App\Http\Controllers\AccomodationController::class, 'store'])->name('accomodation.store');
 
 require __DIR__.'/auth.php';

@@ -5,7 +5,6 @@ window.addEventListener('load', async () => {
     if (input.length > 0) {
         input.forEach(i => {
             const form = i.closest('form');
-            console.log(form.elements);
 
             const placeAutocomplete = new google.maps.places.PlaceAutocompleteElement();
             i.appendChild(placeAutocomplete);

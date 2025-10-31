@@ -63,7 +63,14 @@
                 @endforeach
             </tbody>
         </table>
+        <button x-data @click="$dispatch('open-modal', 'flight-modal')">New</button>
     </x-card>
+
+    <x-modal name="flight-modal">
+        <div class="p-6">
+            <x-forms.flight-form :tripId="$trip->id" :minDate="$trip->date_from" :maxDate="$trip->date_to->addDay()"></x-forms.flight-form>
+        </div>
+    </x-modal>
 
     <x-card class="mb-6">
         <x-slot:header>
@@ -103,19 +110,19 @@
     </x-card>
 
     <div class="grid grid-cols-2 gap-6">
-        <x-card class="shadow-purple-100/50">
-            <x-slot:header>
-                <div class="p-2 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white w-6 h-6"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14.5 6.5l3 -2.9a2.05 2.05 0 0 1 2.9 2.9l-2.9 3l2.5 7.5l-2.5 2.55l-3.5 -6.55l-3 3v3l-2 2l-1.5 -4.5l-4.5 -1.5l2 -2h3l3 -3l-6.5 -3.5l2.5 -2.5l7.5 2.5z" /></svg>
-                </div>
-                <div>
-                    <h4 class="leading-none">Flight</h4>
-                    <p class="text-slate-500 text-sm mt-0.5">Configure your flight parameters</p>
-                </div>
-            </x-slot:header>
+{{--        <x-card class="shadow-purple-100/50">--}}
+{{--            <x-slot:header>--}}
+{{--                <div class="p-2 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl">--}}
+{{--                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white w-6 h-6"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14.5 6.5l3 -2.9a2.05 2.05 0 0 1 2.9 2.9l-2.9 3l2.5 7.5l-2.5 2.55l-3.5 -6.55l-3 3v3l-2 2l-1.5 -4.5l-4.5 -1.5l2 -2h3l3 -3l-6.5 -3.5l2.5 -2.5l7.5 2.5z" /></svg>--}}
+{{--                </div>--}}
+{{--                <div>--}}
+{{--                    <h4 class="leading-none">Flight</h4>--}}
+{{--                    <p class="text-slate-500 text-sm mt-0.5">Configure your flight parameters</p>--}}
+{{--                </div>--}}
+{{--            </x-slot:header>--}}
 
-            <x-forms.flight-form :tripId="$trip->id"></x-forms.flight-form>
-        </x-card>
+{{--            <x-forms.flight-form :tripId="$trip->id"></x-forms.flight-form>--}}
+{{--        </x-card>--}}
 
         <x-card class="shadow-teal-100/50">
             <x-slot:header>
@@ -128,7 +135,7 @@
                 </div>
             </x-slot:header>
 
-            <x-forms.accomodation-form :tripId="$trip->id"></x-forms.accomodation-form>
+            <x-forms.accomodation-form :tripId="$trip->id" :minDate="$trip->date_from" :maxDate="$trip->date_to"></x-forms.accomodation-form>
         </x-card>
     </div>
     @push('scripts')

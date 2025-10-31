@@ -10,7 +10,14 @@ class Trip extends Model
     protected $fillable = [
         'name',
         'description',
-        'user_timezone',
+        'country_id',
+        'date_from',
+        'date_to'
+    ];
+
+    protected $casts = [
+        'date_from' => 'date',
+        'date_to' => 'date',
     ];
 
     public function flights(): HasMany

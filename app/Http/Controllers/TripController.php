@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TripRequest;
 use App\Models\Airport;
+use App\Models\Country;
 use App\Models\Trip;
 use App\Services\NagerDateService;
 use App\Services\NominatimService;
@@ -34,7 +35,8 @@ class TripController extends Controller
      */
     public function create()
     {
-        return view('trip.create');
+        $countries = Country::query()->orderBy('name')->get();
+        return view('trip.create', compact('countries'));
     }
 
     /**
@@ -47,7 +49,7 @@ class TripController extends Controller
         try {
             $trip = Trip::query()->create($data);
         } catch (\Exception $exception) {
-            return redirect()->back()->with('error', 'An error occurred, please try again');
+            return redirect()->back()->with('error', 'An error occurred, please try again')->withInput();
         }
 
         return redirect(route('trip.edit', $trip));
@@ -184,7 +186,8 @@ class TripController extends Controller
      */
     public function edit(Trip $trip)
     {
-        return view('trip.edit', compact('trip'));
+        $airports = Airport::query()->where('country_id', $trip->country_id)->get(['id', 'iata_code', 'name']);
+        return view('trip.edit', compact('trip', 'airports'));
     }
 
     /**
