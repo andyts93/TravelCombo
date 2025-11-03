@@ -35,7 +35,9 @@ class TripController extends Controller
      */
     public function create()
     {
-        $countries = Country::query()->orderBy('name')->get();
+        $countries = Cache::rememberForever('countries', function() {
+           return Country::query()->orderBy('name')->get();
+        });
         return view('trip.create', compact('countries'));
     }
 
@@ -186,8 +188,11 @@ class TripController extends Controller
      */
     public function edit(Trip $trip)
     {
-        $airports = Airport::query()->where('country_id', $trip->country_id)->get(['id', 'iata_code', 'name']);
-        return view('trip.edit', compact('trip', 'airports'));
+        $countries = Cache::rememberForever('countries', function() {
+            return Country::query()->orderBy('name')->get();
+        });
+
+        return view('trip.edit', compact('trip', 'countries'));
     }
 
     /**

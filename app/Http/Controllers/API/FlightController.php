@@ -19,12 +19,13 @@ class FlightController extends Controller
             $airportFrom = Airport::query()->firstWhere('iata_code', $leg['departureAirportCode']);
             $airportTo = Airport::query()->firstWhere('iata_code', $leg['arrivalAirportCode']);
             $dateFrom = Carbon::parse($leg['date'] . ' ' . $leg['departureTime'])->format('Y-m-d H:i');
-            $dateTo = Carbon::parse($leg['date'] . ' ' . $leg['arrivalTime'])->format('Y-m-d H:i');
+            $dateTo = Carbon::parse($leg['arrivalDate'] . ' ' . $leg['arrivalTime'])->format('Y-m-d H:i');
             return [
                 'airportFrom' => $airportFrom,
                 'airportTo' => $airportTo,
                 'dateFrom' => $dateFrom,
                 'dateTo' => $dateTo,
+                'stops' => intval($leg['stops']),
             ];
         }, $data['legs']);
 

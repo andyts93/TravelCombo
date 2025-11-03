@@ -35,6 +35,8 @@ class FlightRequest extends FormRequest
             'airport_to_id_return' => ['nullable', 'exists:airports,id'],
             'date_from_return' => ['nullable', 'date'],
             'date_to_return' => ['nullable', 'date', 'after:date_from'],
+            'stops' => ['nullable', 'numeric', 'gte:0'],
+            'stops_return' => ['nullable', 'numeric', 'gte:0']
         ];
     }
 }

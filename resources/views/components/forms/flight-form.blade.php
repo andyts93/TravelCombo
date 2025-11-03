@@ -25,7 +25,7 @@
             <legend class="px-2 mx-auto font-medium text-slate-700">Outbound</legend>
             <div class="space-y-3">
                 <x-input-label for="airport_from_id">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-purple-500"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /><path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" /></svg>
+                    <x-icons.map-pin class="size-4 text-purple-500"></x-icons.map-pin>
                     Origin
                 </x-input-label>
                 <x-select-input name="airport_from_id" id="airport_from_id" required>
@@ -39,7 +39,7 @@
             </div>
             <div class="space-y-3">
                 <x-input-label for="airport_to_id">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-pink-500"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /><path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" /></svg>
+                    <x-icons.map-pin class="size-4 text-pink-500"></x-icons.map-pin>
                     Destination
                 </x-input-label>
                 <x-select-input name="airport_to_id" id="airport_to_id" required>
@@ -51,7 +51,7 @@
             </div>
             <div class="space-y-3">
                 <x-input-label for="date_from">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-teal-500"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" /><path d="M16 3v4" /><path d="M21.121 20.121a3 3 0 1 0 -4.242 0c.418 .419 1.125 1.045 2.121 1.879c1.051 -.89 1.759 -1.516 2.121 -1.879z" /><path d="M19 18v.01" /><path d="M8 3v4" /><path d="M4 11h16" /></svg>
+                    <x-icons.calendar-pin class="size-4 text-teal-500"></x-icons.calendar-pin>
                     Departure
                 </x-input-label>
                 <x-text-input name="date_from" id="date_from" type="datetime-local" min="{{ $minDate }}" max="{{ $maxDate }}" value="{{ old('date_from', $flight?->date_from) }}"></x-text-input>
@@ -59,18 +59,26 @@
             </div>
             <div class="space-y-3">
                 <x-input-label for="date_to">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-cyan-500"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" /><path d="M16 3v4" /><path d="M21.121 20.121a3 3 0 1 0 -4.242 0c.418 .419 1.125 1.045 2.121 1.879c1.051 -.89 1.759 -1.516 2.121 -1.879z" /><path d="M19 18v.01" /><path d="M8 3v4" /><path d="M4 11h16" /></svg>
+                    <x-icons.calendar-pin class="size-4 text-cyan-500"></x-icons.calendar-pin>
                     Arrival
                 </x-input-label>
                 <x-text-input name="date_to" id="date_to" type="datetime-local" min="{{ $minDate }}" max="{{ $maxDate }}" value="{{ old('date_to', $flight?->date_to) }}"></x-text-input>
                 <x-input-error :messages="$errors->get('date_to')" />
+            </div>
+            <div class="space-y-3">
+                <x-input-label for="stops">
+                    <x-icons.route-2 class="size-4 text-violet-500"></x-icons.route-2>
+                    Stops
+                </x-input-label>
+                <x-text-input name="stops" id="stops" type="number" min="0" value="{{ old('stops', $flight?->stops) }}"></x-text-input>
+                <x-input-error :messages="$errors->get('stops')" />
             </div>
         </fieldset>
         <fieldset class="col-span-2 grid md:grid-cols-2 gap-6 border px-2 pt-2 pb-4 rounded-lg" x-show="type === 'round-trip'" x-transition x-cloak>
             <legend class="px-2 mx-auto font-medium text-slate-700">Inbound</legend>
             <div class="space-y-3">
                 <x-input-label for="airport_from_id_return">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-purple-500"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /><path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" /></svg>
+                    <x-icons.map-pin class="size-4 text-purple-500"></x-icons.map-pin>
                     Origin
                 </x-input-label>
                 <x-select-input name="airport_from_id_return" id="airport_from_id_return" required>
@@ -82,7 +90,7 @@
             </div>
             <div class="space-y-3">
                 <x-input-label for="airport_to_id_return">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-pink-500"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /><path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" /></svg>
+                    <x-icons.map-pin class="size-4 text-pink-500"></x-icons.map-pin>
                     Destination
                 </x-input-label>
                 <x-select-input name="airport_to_id_return" id="airport_to_id_return" required>
@@ -94,7 +102,7 @@
             </div>
             <div class="space-y-3">
                 <x-input-label for="date_from_return">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-teal-500"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" /><path d="M16 3v4" /><path d="M21.121 20.121a3 3 0 1 0 -4.242 0c.418 .419 1.125 1.045 2.121 1.879c1.051 -.89 1.759 -1.516 2.121 -1.879z" /><path d="M19 18v.01" /><path d="M8 3v4" /><path d="M4 11h16" /></svg>
+                    <x-icons.calendar-pin class="size-4 text-teal-500"></x-icons.calendar-pin>
                     Departure
                 </x-input-label>
                 <x-text-input name="date_from_return" id="date_from_return" min="{{ $minDate }}" max="{{ $maxDate }}" type="datetime-local" value="{{ old('date_from_return', $flight?->date_from) }}"></x-text-input>
@@ -102,11 +110,19 @@
             </div>
             <div class="space-y-3">
                 <x-input-label for="date_to_return">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-cyan-500"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" /><path d="M16 3v4" /><path d="M21.121 20.121a3 3 0 1 0 -4.242 0c.418 .419 1.125 1.045 2.121 1.879c1.051 -.89 1.759 -1.516 2.121 -1.879z" /><path d="M19 18v.01" /><path d="M8 3v4" /><path d="M4 11h16" /></svg>
+                    <x-icons.calendar-pin class="size-4 text-cyan-500"></x-icons.calendar-pin>
                     Arrival
                 </x-input-label>
                 <x-text-input name="date_to_return" id="date_to_return" min="{{ $minDate }}" max="{{ $maxDate }}" type="datetime-local" value="{{ old('date_to', $flight?->date_to) }}"></x-text-input>
                 <x-input-error :messages="$errors->get('date_to_return')" />
+            </div>
+            <div class="space-y-3">
+                <x-input-label for="stops_return">
+                    <x-icons.route-2 class="size-4 text-violet-500"></x-icons.route-2>
+                    Stops
+                </x-input-label>
+                <x-text-input name="stops_return" id="stops_return" type="number" min="0" value="{{ old('stops', $flight?->stops) }}"></x-text-input>
+                <x-input-error :messages="$errors->get('stops_return')" />
             </div>
         </fieldset>
         <div class="space-y-3">

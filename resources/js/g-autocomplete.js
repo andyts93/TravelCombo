@@ -5,8 +5,11 @@ window.addEventListener('load', async () => {
     if (input.length > 0) {
         input.forEach(i => {
             const form = i.closest('form');
+            const regionCode = i.getAttribute('data-region-code');
 
-            const placeAutocomplete = new google.maps.places.PlaceAutocompleteElement();
+            const placeAutocomplete = new google.maps.places.PlaceAutocompleteElement({
+                includedRegionCodes: [regionCode],
+            });
             i.appendChild(placeAutocomplete);
 
             placeAutocomplete.addEventListener('gmp-select', async ({ placePrediction }) => {

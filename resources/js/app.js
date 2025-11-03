@@ -32,6 +32,7 @@ document.addEventListener('alpine:init', () => {
 
                                     form.querySelector('#date_from').value = json.legs[0].dateFrom;
                                     form.querySelector('#date_to').value = json.legs[0].dateTo;
+                                    form.querySelector('#stops').value = json.legs[0].stops;
 
                                     if (json.legs.length > 1) {
                                         let evt = new CustomEvent('set', {
@@ -44,6 +45,7 @@ document.addEventListener('alpine:init', () => {
 
                                         form.querySelector('#date_from_return').value = json.legs[1].dateFrom;
                                         form.querySelector('#date_to_return').value = json.legs[1].dateTo;
+                                        form.querySelector('#stops_return').value = json.legs[1].stops;
                                     }
                                 }
                                 if (json.prices.length > 0) {

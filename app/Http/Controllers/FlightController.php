@@ -38,6 +38,7 @@ class FlightController extends Controller
                     'price' => $data['price'],
                     'people' => $data['people'],
                     'trip_type' => 'outbound',
+                    'stops' => $data['stops']
                 ]);
                 if ($data['trip_type'] === 'round-trip') {
                     $inbound = Flight::query()->create([
@@ -49,13 +50,13 @@ class FlightController extends Controller
                         'date_to' => $data['date_to_return'],
                         'price' => 0,
                         'people' => $data['people'],
-                        'trip_type' => 'inbound'
+                        'trip_type' => 'inbound',
+                        'stops' => $data['stops_return']
                     ]);
-                    $flight->linkedFlight()->associate($inbound);
+                    $flight->update(['linked_flight_id' => $inbound->id]);
                 }
             });
         } catch (\Exception $exception) {
-            dd($exception->getMessage());
             return redirect()->back()->with('airport-error', 'An error occurred, please try again.')->withInput();
         }
 

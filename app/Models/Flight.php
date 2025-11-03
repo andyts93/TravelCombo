@@ -20,6 +20,7 @@ class Flight extends Model
         'people',
         'linked_flight_id',
         'trip_type',
+        'stops',
     ];
 
     protected $casts = [

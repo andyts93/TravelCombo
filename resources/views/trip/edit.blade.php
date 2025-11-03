@@ -15,7 +15,7 @@
     </x-slot>
 
     <x-card class="shadow-violet-100/50 mb-4">
-        <x-forms.trip-form :trip="$trip"></x-forms.trip-form>
+        <x-forms.trip-form :trip="$trip" :countries="$countries"></x-forms.trip-form>
     </x-card>
 
     <x-card class="mb-6">
@@ -68,7 +68,7 @@
 
     <x-modal name="flight-modal">
         <div class="p-6">
-            <x-forms.flight-form :tripId="$trip->id" :minDate="$trip->date_from" :maxDate="$trip->date_to->addDay()"></x-forms.flight-form>
+            <x-forms.flight-form :tripId="$trip->id" :minDate="$trip->date_from" :maxDate="$trip->date_to->addDays(2)"></x-forms.flight-form>
         </div>
     </x-modal>
 
@@ -135,7 +135,7 @@
                 </div>
             </x-slot:header>
 
-            <x-forms.accomodation-form :tripId="$trip->id" :minDate="$trip->date_from" :maxDate="$trip->date_to"></x-forms.accomodation-form>
+            <x-forms.accomodation-form :trip="$trip" :minDate="$trip->date_from" :maxDate="$trip->date_to->addDays(2)"></x-forms.accomodation-form>
         </x-card>
     </div>
     @push('scripts')
