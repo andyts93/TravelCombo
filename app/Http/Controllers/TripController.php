@@ -75,6 +75,7 @@ class TripController extends Controller
         $min = [];
 
         foreach ($trip->outboundFlights as $flight) {
+            $combinationN = 0;
             foreach ($trip->accomodations as $accomodation) {
                 $response = Cache::rememberForever($flight->id . $accomodation->id, function() use ($flight, $accomodation) {
                     $response = Http::get('https://router.project-osrm.org/route/v1/car/' . $flight->airportTo->longitude . ',' . $flight->airportTo->latitude . ';' . $accomodation->longitude . ',' . $accomodation->latitude);
@@ -106,6 +107,7 @@ class TripController extends Controller
                 ));
                 $matrix->push((object)[
                     'id' => Str::uuid(),
+                    'n' => ++$combinationN,
                     'flight' => $flight,
                     'accomodation' => $accomodation,
                     'distance' => $response->routes[0]->distance,
@@ -119,9 +121,9 @@ class TripController extends Controller
             }
         }
 
-        $matrix = $matrix->groupBy('accomodation.city')->map(function ($combinations) use ($meteoService, $nominatimService, $unsplashService, $osrmService, $min, $nagerDateService) {
+        $matrix = $matrix->groupBy('accomodation.city')->map(function ($combinations) use ($meteoService, $nominatimService, $unsplashService, $osrmService, $min, $nagerDateService, $trip) {
             $city = $combinations->first()->accomodation->city;
-            $country = $combinations->first()->accomodation->region_code;
+            $country = $trip->country_id;
 
             if ($city) {
                 $minDate = $combinations->pluck('accomodation')->min('date_from');

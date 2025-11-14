@@ -23,7 +23,8 @@ class Accomodation extends Model
         'price',
         'people',
         'url',
-        'timezone'
+        'timezone',
+        'rating'
     ];
 
     protected $casts = [

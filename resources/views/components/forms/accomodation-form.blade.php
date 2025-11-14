@@ -1,20 +1,22 @@
 @props(['accomodation' => null, 'trip', 'minDate', 'maxDate'])
 
-<form action="{{ $accomodation ? route('accomodation.update', $accomodation) : route('accomodation.store') }}" method="POST">
+<form action="{{ $accomodation ? route('accomodation.update', $accomodation) : route('accomodation.store') }}" method="POST" x-data="accomodationForm()" x-ref="form">
     @csrf
     @if($accomodation)
         @method('PUT')
     @endif
 
+    <button type="button" @click="extract">Paste from extractor</button>
+
     <input type="hidden" name="trip_id" value="{{ $trip->id }}" />
 
-    <input type="hidden" name="addressLine" />
-    <input type="hidden" name="city" />
-    <input type="hidden" name="administrative_area" />
-    <input type="hidden" name="postal_code" />
-    <input type="hidden" name="region_code" />
-    <input type="hidden" name="latitude" />
-    <input type="hidden" name="longitude" />
+    <input type="text" name="addressLine" />
+    <input type="text" name="city" />
+    <input type="text" name="administrative_area" />
+    <input type="text" name="postal_code" />
+    <input type="text" name="region_code" />
+    <input type="text" name="latitude" />
+    <input type="text" name="longitude" />
 
     <div class="grid md:grid-cols-2 gap-6">
         <div class="space-y-3 col-span-2">
@@ -71,6 +73,14 @@
             </x-input-label>
             <x-text-input name="people" id="people" type="number" step="1" required value="{{ old('people', $accomodation?->people) }}"></x-text-input>
             <x-input-error :messages="$errors->get('people')" />
+        </div>
+        <div class="space-y-3">
+            <x-input-label for="rating">
+                <x-icons.star class="size-4 text-blue-500"></x-icons.star>
+                Rating
+            </x-input-label>
+            <x-text-input name="rating" id="rating" type="number" step="0.1" required value="{{ old('rating', $accomodation?->rating) }}"></x-text-input>
+            <x-input-error :messages="$errors->get('rating')" />
         </div>
     </div>
     <div class="flex justify-end gap-4 mt-4">

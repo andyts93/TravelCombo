@@ -329,16 +329,18 @@
                     @foreach($city->combinations as $m)
                         <x-table.tr-body id="{{ $m->id }}" x-bind:class="selected === '{{ $m->id }}' ? 'bg-gradient-to-br from-green-50 to-emerald-100 animate-[pulse_2s_ease-in-out_0s_2]' : ''">
                             <x-table.td-body>
-                                <p>{{ $m->flight->airportFrom->iata_code }} - {{ $m->flight->airportTo->iata_code }}</p>
-                                <p class="text-xs text-slate-600 flex items-center gap-1">
-                                    <x-icons.clock class="size-3"></x-icons.clock>
-                                    {{ $m->flight->date_from->format('H:i') }} → {{ $m->flight->date_to->format('H:i') }}
-                                </p>
-                                <p class="mt-2">{{ $m->flight->linkedFlight->airportFrom->iata_code }} - {{ $m->flight->linkedFlight->airportTo->iata_code }}</p>
-                                <p class="text-xs text-slate-600 flex items-center gap-1">
-                                    <x-icons.clock class="size-3"></x-icons.clock>
-                                    {{ $m->flight->linkedFlight->date_from->format('H:i') }} → {{ $m->flight->linkedFlight->date_to->format('H:i') }}
-                                </p>
+                                @if($m->n === 1)
+                                    <p>{{ $m->flight->airportFrom->iata_code }} - {{ $m->flight->airportTo->iata_code }}</p>
+                                    <p class="text-xs text-slate-600 flex items-center gap-1">
+                                        <x-icons.clock class="size-3"></x-icons.clock>
+                                        {{ $m->flight->date_from->format('H:i') }} → {{ $m->flight->date_to->format('H:i') }}
+                                    </p>
+                                    <p class="mt-2">{{ $m->flight->linkedFlight->airportFrom->iata_code }} - {{ $m->flight->linkedFlight->airportTo->iata_code }}</p>
+                                    <p class="text-xs text-slate-600 flex items-center gap-1">
+                                        <x-icons.clock class="size-3"></x-icons.clock>
+                                        {{ $m->flight->linkedFlight->date_from->format('H:i') }} → {{ $m->flight->linkedFlight->date_to->format('H:i') }}
+                                    </p>
+                                @endif
                             </x-table.td-body>
                             <x-table.td-body>
                                 <p class="font-medium">{{ $m->accomodation->name }}</p>

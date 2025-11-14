@@ -36,6 +36,7 @@ class AccomodationRequest extends FormRequest
             'date_from' => ['required', 'date'],
             'date_to' => ['required', 'date', 'after:date_from'],
             'people' => ['required', 'numeric', 'gt:0'],
+            'rating' => ['nullable', 'numeric', 'gt:0'],
         ];
     }
 }

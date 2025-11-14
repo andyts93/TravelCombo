@@ -51,11 +51,36 @@ document.addEventListener('alpine:init', () => {
                                 if (json.prices.length > 0) {
                                     form.querySelector('#price').value = json.prices[0].totalPrice;
                                 }
+                                form.querySelector('#people').value = json.people;
                             })
                     } catch (e) {
                         console.error('JSON not valid');
                     }
                 })
+            }
+        }
+    });
+
+    Alpine.data('accomodationForm', () => {
+        return {
+            extract() {
+                navigator.clipboard.readText().then(text => {
+                    try {
+                        const json = JSON.parse(text);
+                        const form = this.$refs.form;
+                        const fieldNames = [...form.elements]
+                            .map(el => el.name)
+                            .filter(name => name);
+
+                        fieldNames.forEach(field => {
+                            if (json[field]) {
+                                form.querySelector(`[name="${field}"]`).value = json[field];
+                            }
+                        })
+                    } catch (e) {
+                        console.error('JSON not valid');
+                    }
+                });
             }
         }
     })

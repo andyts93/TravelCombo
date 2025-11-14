@@ -12,7 +12,8 @@ class FlightController extends Controller
     public function import(Request $request) {
         $data = $request->validate([
             'legs' => ['required', 'array'],
-            'prices' => ['required', 'array']
+            'prices' => ['required', 'array'],
+            'people' => ['required', 'numeric']
         ]);
 
         $data['legs'] = array_map(function($leg) {
